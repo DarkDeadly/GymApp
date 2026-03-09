@@ -8,12 +8,11 @@ import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native'
   const { signOut } = useClerk()
   const router = useRouter()
   const {currentUser , isLoading} = useCurrentUser()
-  console.log(currentUser)
   const handleSignOut = async () => {
     try {
       await signOut()
       // Redirect to your desired page
-      router.push('/(auth)')
+      router.push('/(auth)/main')
     } catch (err) {
       // See https://clerk.com/docs/guides/development/custom-flows/error-handling
       // for more info on error handling

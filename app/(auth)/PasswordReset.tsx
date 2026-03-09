@@ -1,5 +1,7 @@
+import { useResetPassword } from "@/Features/Authentication/api/useAuthentication";
 import AuthInputs from '@/Features/Authentication/Components/AuthForm';
 import { OtpInput } from '@/Features/Authentication/Components/OtpVerif';
+import ServerErrorMessage from "@/Features/Authentication/Components/ServerError";
 import { PasswordResetSchema } from '@/Features/Authentication/util/schema';
 import { Ionicons } from '@expo/vector-icons';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -9,26 +11,28 @@ import { useForm } from 'react-hook-form';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
+type resetPasswordData = {
+  code : string , 
+  newPassword: string
+}
+
 export default function ResetPassword() {
-    const form = useForm({
+    const form = useForm<resetPasswordData>({
         resolver : yupResolver(PasswordResetSchema),
         defaultValues : {
             code : "",
             newPassword:""
         }
     })
-  const [newPassword, setNewPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const {fetchStatus , handlePasswordReset , serverError} = useResetPassword()
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  const handleUpdatePassword = async () => {
-    setLoading(true);
-    // Add your Clerk/Convex logic here (e.g., signIn.attemptFirstFactor)
-    setTimeout(() => {
-        setLoading(false);
-        router.replace("/(auth)/login");
-    }, 2000);
+  const handleUpdatePassword =  (data : resetPasswordData) => {
+    handlePasswordReset({
+      code : data.code , 
+      newPassword : data.newPassword
+    })
   };
 
   return (
@@ -52,7 +56,9 @@ export default function ResetPassword() {
         </Text>
       </Animated.View>
 
-      <View className="mt-10 space-y-4">
+      {serverError && <ServerErrorMessage message={serverError} />}
+
+      <View className="mb-5 mt-2 space-y-4">
         {/* 6-Digit Code Input */}
         <Animated.View entering={FadeInDown.duration(600).delay(400)} className="mb-5">
           <Text className="text-gray-400 font-semibold mb-2 ml-1">Verification Code</Text>
@@ -62,6 +68,11 @@ export default function ResetPassword() {
           error={!!form.formState.errors.code}
           
           />
+            {form.formState.errors.code && (
+                              <Text className="text-red-500 text-xs mt-1 ml-2 font-medium">
+                                  {form.formState.errors.code.message}
+                              </Text>
+                          )}
         </Animated.View>
 
         {/* New Password Input */}
@@ -77,16 +88,21 @@ export default function ResetPassword() {
             iconVar={showPassword}
             onPress={() => setShowPassword(!showPassword)}
             />
+              {form.formState.errors.newPassword && (
+                                <Text className="text-red-500 text-xs mt-1 ml-2 font-medium">
+                                    {form.formState.errors.newPassword.message}
+                                </Text>
+                            )}
          
         </Animated.View>
 
         <Animated.View entering={FadeInDown.duration(600).delay(800)}>
           <TouchableOpacity 
-            onPress={handleUpdatePassword}
-            disabled={loading}
+            onPress={form.handleSubmit(handleUpdatePassword)}
+            disabled={fetchStatus == 'fetching'}
             className={`mt-6 h-14 rounded-2xl items-center justify-center bg-main-yellowGreen `}
           >
-            {loading ? (
+            {fetchStatus =="fetching" ? (
               <ActivityIndicator color="#000" />
             ) : (
               <Text className="text-black font-bold text-lg">Update Password</Text>
