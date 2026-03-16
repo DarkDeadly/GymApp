@@ -24,7 +24,7 @@ import { ActivityIndicator, View } from "react-native";
     return <Redirect href={'/(admin)'} />
   }
    if (isAuthenticated && currentUser?.role === "user") {
-    return <Redirect href={'/(user)'} />
+    return <Redirect href={"/(user)/WelcomeScreen"} />
   }
    if (isAuthenticated &&currentUser?.role === "subscriber") {
     return <Redirect href={'/(subscriber)'} />

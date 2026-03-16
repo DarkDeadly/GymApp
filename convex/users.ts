@@ -15,7 +15,8 @@ export const syncUserCreation = mutation({
         clerkId : args.clerkId , 
         email : args.email,
         role : "user",
-        fullName : args.fullName
+        fullName : args.fullName,
+        firstTime : true
       })
 
       return await ctx.db.get(id)

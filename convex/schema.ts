@@ -6,6 +6,7 @@ export default defineSchema({
         clerkId : v.string(),
         fullName : v.string() , 
         email : v.string() , 
+        firstTime : v.boolean(),
         role : v.union(v.literal("admin") , v.literal("subscriber") , v.literal("user")) 
     }).index("by_clerkId" , ['clerkId']) 
 })
