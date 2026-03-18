@@ -1,13 +1,13 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Control, Controller } from 'react-hook-form';
-import { ImageBackground, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ImageBackground, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
-    FadeInDown,
-    interpolateColor,
-    useAnimatedStyle,
-    useDerivedValue,
-    withTiming
+  FadeInDown,
+  interpolateColor,
+  useAnimatedStyle,
+  useDerivedValue,
+  withTiming
 } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -31,9 +31,10 @@ interface multipleChoiceProps {
   onPress?: () => void;
   selectedItem: string | undefined;
   choices: choicesOption[];
+  isPending? : boolean
 }
 
-const MultipleChoices = ({ title, imagePath, control, choices, onPress, selectedItem, name }: multipleChoiceProps) => {
+const MultipleChoices = ({ title, imagePath, control, choices, onPress, selectedItem, name , isPending}: multipleChoiceProps) => {
   const insets = useSafeAreaInsets();
 
   return (
@@ -90,7 +91,7 @@ const MultipleChoices = ({ title, imagePath, control, choices, onPress, selected
                 }`}
               >
                 <Text className={`text-xl font-bold ${selectedItem ? 'text-black' : 'text-gray-300'}`}>
-                  {selectedItem ? 'Continue' : 'Select an option'}
+                  {isPending ? <ActivityIndicator size={"large"} /> : selectedItem ? 'Continue' : 'Select an option'}
                 </Text>
               </TouchableOpacity>
             </Animated.View>

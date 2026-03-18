@@ -1,6 +1,7 @@
 // screens/OnboardingAge.tsx
 import MultipleChoices from '@/Features/User/components/MultipleChoices';
 import { ageOptions } from '@/Features/User/constants/UserExtraInfo';
+import { useOnboardingStore } from '@/Features/User/store/useOnBoardingStore';
 import { SelectSchema } from '@/Features/User/util/Schema';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'expo-router';
@@ -23,11 +24,13 @@ export default function OnboardingAge() {
       selectedItem: ""
     }
   });
+  const setFields = useOnboardingStore((state) => state.setField )
 
 
   // 2. Wrap your navigation in handleSubmit to benefit from Yup validation
   const onSubmit = (data: AgeValue) => {
-    console.log("Saving selection:", data.selectedItem);
+
+    setFields("age" , data.selectedItem)
     router.push("/(user)/genderSelection");
   };
 
@@ -41,6 +44,7 @@ export default function OnboardingAge() {
       choices={ageOptions}
       onPress={form.handleSubmit(onSubmit)}
       selectedItem={form.watch("selectedItem")}
+      
       />
     
   );

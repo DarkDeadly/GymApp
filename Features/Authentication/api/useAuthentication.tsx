@@ -1,5 +1,5 @@
 import { api } from "@/convex/_generated/api"
-import { useAuth, useSignIn, useSignUp } from "@clerk/expo"
+import { useAuth, useClerk, useSignIn, useSignUp } from "@clerk/expo"
 import { useMutation, useQuery } from "convex/react"
 import { useRouter } from "expo-router"
 import { useState } from "react"
@@ -92,7 +92,7 @@ export const useSignInUser = () => {
         })
         if (error) {
             console.log("the error is : ", error.message)
-            if (error.message === "Couldn't find your account") {
+            if (error.message === "Couldn't find your account.") {
                 setServerError("the email you entered in not register please Signup")
             }
             if (error.message === "Password is incorrect. Try again, or use another method.") {
@@ -201,3 +201,17 @@ export const useResetPassword = () => {
     return {handlePasswordReset , fetchStatus , serverError}
 
 }
+
+
+ export const handleSignOut = async () => {
+      const { signOut } = useClerk()
+      const router = useRouter()
+
+    try {
+      await signOut()
+      // Best Practice: replace to root to trigger app/index.tsx logic
+      router.replace('/') 
+    } catch (err) {
+      console.error(JSON.stringify(err, null, 2))
+    }
+  }

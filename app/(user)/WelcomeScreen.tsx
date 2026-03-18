@@ -1,8 +1,9 @@
 // screens/OnboardingWelcome.tsx
+import { useCurrentUser } from '@/Features/Authentication/api/useAuthentication';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import React from 'react';
-import { ImageBackground, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, ImageBackground, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // You can later extract this to a constants file or theme
@@ -19,8 +20,19 @@ const COLORS = {
 export default function OnboardingWelcome() {
   const insets = useSafeAreaInsets();
   const router = useRouter()
+  const {currentUser , isLoading} = useCurrentUser()
+  
+    if ( isLoading) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000' }}>
+          <ActivityIndicator size="large" color="#ADFF2F" /> 
+        </View>
+      );
+    }
+  
 
-  return (
+  if (currentUser?.firstTime) {
+    return (
     <ImageBackground
       source={require("@/assets/images/HomePage.jpg")}
       className="flex-1"
@@ -73,4 +85,7 @@ export default function OnboardingWelcome() {
     </ImageBackground>
     
   );
+  }
+  return  <Redirect href={"/(user)/(tabs)/Home"} />
+  
 }

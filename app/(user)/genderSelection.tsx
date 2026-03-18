@@ -1,5 +1,6 @@
 import MultipleChoices from '@/Features/User/components/MultipleChoices'
 import { GENDER_CHOICES } from '@/Features/User/constants/UserExtraInfo'
+import { useOnboardingStore } from '@/Features/User/store/useOnBoardingStore'
 import { SelectSchema } from '@/Features/User/util/Schema'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useRouter } from 'expo-router'
@@ -19,11 +20,14 @@ const genderSelection = () => {
             selectedItem: ""
         }
     })
+    const setFields = useOnboardingStore((state) => state.setField )
+    
     const router = useRouter()
 
     const onSubmit = (data: SelectedGender) => {
-        console.log("Saving selection:", data.selectedItem);
-        router.push("/(user)/heightCustom")
+        
+       setFields("gender" , data.selectedItem) 
+       router.push("/(user)/heightCustom")
     };
     return (
        <MultipleChoices
